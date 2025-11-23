@@ -1,108 +1,108 @@
-{
-  "name": "rest-express",
-  "version": "1.0.0",
-  "type": "module",
-  "license": "MIT",
-  "scripts": {
-    "dev": "NODE_ENV=development tsx server/index-dev.ts",
-    "build": "vite build && esbuild server/index-prod.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js",
-    "start": "NODE_ENV=production node dist/index.js",
-    "check": "tsc",
-    "db:push": "drizzle-kit push"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
-    "@jridgewell/trace-mapping": "^0.3.25",
-    "@neondatabase/serverless": "^0.10.4",
-    "@radix-ui/react-accordion": "^1.2.4",
-    "@radix-ui/react-alert-dialog": "^1.1.7",
-    "@radix-ui/react-aspect-ratio": "^1.1.3",
-    "@radix-ui/react-avatar": "^1.1.4",
-    "@radix-ui/react-checkbox": "^1.1.5",
-    "@radix-ui/react-collapsible": "^1.1.4",
-    "@radix-ui/react-context-menu": "^2.2.7",
-    "@radix-ui/react-dialog": "^1.1.7",
-    "@radix-ui/react-dropdown-menu": "^2.1.7",
-    "@radix-ui/react-hover-card": "^1.1.7",
-    "@radix-ui/react-label": "^2.1.3",
-    "@radix-ui/react-menubar": "^1.1.7",
-    "@radix-ui/react-navigation-menu": "^1.2.6",
-    "@radix-ui/react-popover": "^1.1.7",
-    "@radix-ui/react-progress": "^1.1.3",
-    "@radix-ui/react-radio-group": "^1.2.4",
-    "@radix-ui/react-scroll-area": "^1.2.4",
-    "@radix-ui/react-select": "^2.1.7",
-    "@radix-ui/react-separator": "^1.1.3",
-    "@radix-ui/react-slider": "^1.2.4",
-    "@radix-ui/react-slot": "^1.2.0",
-    "@radix-ui/react-switch": "^1.1.4",
-    "@radix-ui/react-tabs": "^1.1.4",
-    "@radix-ui/react-toast": "^1.2.7",
-    "@radix-ui/react-toggle": "^1.1.3",
-    "@radix-ui/react-toggle-group": "^1.1.3",
-    "@radix-ui/react-tooltip": "^1.2.0",
-    "@tanstack/react-query": "^5.60.5",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
-    "connect-pg-simple": "^10.0.0",
-    "date-fns": "^3.6.0",
-    "drizzle-orm": "^0.39.1",
-    "drizzle-zod": "^0.7.0",
-    "embla-carousel-react": "^8.6.0",
-    "express": "^4.21.2",
-    "cors": "^2.8.5",
-    "express-session": "^1.18.1",
-    "framer-motion": "^11.13.1",
-    "input-otp": "^1.4.2",
-    "lucide-react": "^0.453.0",
-    "memorystore": "^1.6.7",
-    "next-themes": "^0.4.6",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
-    "react-hook-form": "^7.55.0",
-    "react-icons": "^5.4.0",
-    "react-resizable-panels": "^2.1.7",
-    "recharts": "^2.15.2",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "tw-animate-css": "^1.2.5",
-    "vaul": "^1.1.2",
-    "wouter": "^3.3.5",
-    "ws": "^8.18.0",
-    "zod": "^3.24.2",
-    "zod-validation-error": "^3.4.0"
-  },
-  "devDependencies": {
-    "@replit/vite-plugin-cartographer": "^0.4.4",
-    "@replit/vite-plugin-dev-banner": "^0.1.1",
-    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
-    "@tailwindcss/typography": "^0.5.15",
-    "@tailwindcss/vite": "^4.1.3",
-    "@types/connect-pg-simple": "^7.0.3",
-    "@types/express": "4.17.21",
-    "@types/express-session": "^1.18.0",
-    "@types/node": "20.16.11",
-    "@types/passport": "^1.0.16",
-    "@types/passport-local": "^1.0.38",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "@types/ws": "^8.5.13",
-    "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.4.20",
-    "drizzle-kit": "^0.31.4",
-    "esbuild": "^0.25.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.17",
-    "tsx": "^4.20.5",
-    "typescript": "5.6.3",
-    "vite": "^5.4.20"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.8"
+// server/index-prod.ts
+import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import cors from 'cors';
+
+const app = express();
+
+/** === CORS === */
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // temporarily allow everything (keeps deployed app working).
+    return callback(null, true);
+  }
+}));
+
+/**
+ * Try several candidate directories to find the built frontend (index.html).
+ * This handles different Vite/SSR/monorepo setups.
+ */
+const candidates = [
+  path.join(process.cwd(), 'dist'),            // common Vite output
+  path.join(process.cwd(), 'dist', 'client'), // some projects put client in dist/client
+  path.join(process.cwd(), 'dist', 'public'),
+  path.join(process.cwd(), 'public'),
+  path.join(process.cwd(), 'build')
+];
+
+let staticDir: string | null = null;
+let foundIndexPath: string | null = null;
+
+for (const dir of candidates) {
+  const indexPath = path.join(dir, 'index.html');
+  try {
+    if (fs.existsSync(indexPath)) {
+      staticDir = dir;
+      foundIndexPath = indexPath;
+      break;
+    }
+  } catch (e) {
+    // ignore and continue
   }
 }
 
+// If we didn't find index.html, log the contents of dist (for debugging) and still attempt to serve whatever is in `dist`
+if (!staticDir) {
+  const fallbackDir = path.join(process.cwd(), 'dist');
+  console.warn('Warning: index.html not found in expected locations. Listing dist contents for debugging...');
+  try {
+    const walk = (d: string, depth = 0) => {
+      if (!fs.existsSync(d)) return [];
+      return fs.readdirSync(d).flatMap(name => {
+        const full = path.join(d, name);
+        const stat = fs.statSync(full);
+        if (stat.isDirectory() && depth < 3) {
+          return [name + '/', ...walk(full, depth + 1).map(x => '  ' + x)];
+        }
+        return [name];
+      });
+    };
+    const files = walk(fallbackDir);
+    console.warn('dist/ contents:\n' + (files.length ? files.join('\n') : '<empty or does not exist>'));
+  } catch (err) {
+    console.warn('Could not list dist contents:', err);
+  }
+  staticDir = fallbackDir;
+}
+
+/** Serve static files (if any) from the chosen directory */
+app.use(express.static(staticDir));
+
+// health endpoint
+app.get('/_health', (req, res) => {
+  res.json({ ok: true, ts: Date.now(), staticDir });
+});
+
+// example API endpoint (keep or replace with your real routes)
+app.get('/api/ping', (req, res) => {
+  res.json({ pong: true });
+});
+
+/** Fallback to index.html for client-side routing, but only if it exists */
+app.get('*', (req, res) => {
+  const indexFile = path.join(staticDir as string, 'index.html');
+  if (fs.existsSync(indexFile)) {
+    return res.sendFile(indexFile);
+  }
+  // If index.html truly does not exist, return a helpful message instead of 500
+  res.status(404).send(`
+    <h2>Frontend not found</h2>
+    <p>The server could not find <code>index.html</code> in <code>${staticDir}</code>.</p>
+    <p>Check the build logs to see whether Vite produced the frontend files.</p>
+    <pre>Looked in: ${candidates.join(', ')}</pre>
+  `);
+});
+
+/** Start server */
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT} — staticDir=${staticDir}`);
+});
